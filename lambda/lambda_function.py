@@ -79,7 +79,7 @@ class AddToListIntentHandler(AbstractRequestHandler):
         
         ## get item
         item = ""
-        for i in ["item_dessert", "item_drink", "item_food", "item_food_est", "item_query"]:
+        for i in ["item_dessert", "item_drink", "item_food", "item_query"]:  # removed item_food_est
             ## single
             if (i in ["item_query", "item_food_est"]):
                 if (slots[i].value):
@@ -95,7 +95,7 @@ class AddToListIntentHandler(AbstractRequestHandler):
                     else:
                         category = "Grocery"
         
-        ## contact name task
+        # contact name task
         if (slots["name_slot"].value):
             item = slots["contact_slot"].value + " " + slots["name_slot"].value
             category = "Task"
@@ -170,7 +170,7 @@ class AddToListIntentHandler(AbstractRequestHandler):
             if (suggested == "Costco business center" or suggested == "Costco business"):
                 suggested = "Costco Business"
             item = re.sub(" ", "%20", item)
-            category = re.sub(" ", "%20", purpose)
+            category = re.sub(" ", "%20", category)
             purpose = re.sub(" ", "%20", purpose)
             suggested = re.sub(" ", "%20", suggested)
             due = re.sub(" ", "%20", due)

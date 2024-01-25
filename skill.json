@@ -3,24 +3,24 @@
     "apis": {
       "custom": {
         "endpoint": {
-          "uri": "arn:aws:lambda:us-west-2:930213872483:function:1bc2ec02-6e5a-4f11-93e2-a8fe3cf0e76e:Release_0"
+          "uri": "arn:aws:lambda:us-west-2:930213872483:function:d98f8ab2-25ff-48c9-88e4-6ac3784d08b1:Release_0"
         },
         "interfaces": [],
         "locales": {},
         "regions": {
           "NA": {
             "endpoint": {
-              "uri": "arn:aws:lambda:us-east-1:930213872483:function:1bc2ec02-6e5a-4f11-93e2-a8fe3cf0e76e:Release_0"
+              "uri": "arn:aws:lambda:us-east-1:930213872483:function:d98f8ab2-25ff-48c9-88e4-6ac3784d08b1:Release_0"
             }
           },
           "EU": {
             "endpoint": {
-              "uri": "arn:aws:lambda:eu-west-1:930213872483:function:1bc2ec02-6e5a-4f11-93e2-a8fe3cf0e76e:Release_0"
+              "uri": "arn:aws:lambda:eu-west-1:930213872483:function:d98f8ab2-25ff-48c9-88e4-6ac3784d08b1:Release_0"
             }
           },
           "FE": {
             "endpoint": {
-              "uri": "arn:aws:lambda:us-west-2:930213872483:function:1bc2ec02-6e5a-4f11-93e2-a8fe3cf0e76e:Release_0"
+              "uri": "arn:aws:lambda:us-west-2:930213872483:function:d98f8ab2-25ff-48c9-88e4-6ac3784d08b1:Release_0"
             }
           }
         }
@@ -39,7 +39,7 @@
             "help"
           ],
           "keywords": [],
-          "name": "my-list",
+          "name": "test-list",
           "summary": "Sample Short Description"
         }
       },
