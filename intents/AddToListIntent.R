@@ -1,7 +1,7 @@
 ## notes
 ## AMAZON.FoodEstablishment is really broad, so only use it in replacement for AMAZON.SearchQuery when using multiple slots
 ## Grocery category: add_grocery_slot, item_dessert, item_drink, item_food
-## Task category: add_task_slot, task_food_est, item_query
+## Task category: add_task_slot, item_query, task_food_est, contact_slot
 ## Work category (overwrite Task): category_work
 
 
@@ -15,7 +15,7 @@ to_slot <- c("to list", "to my list",
              "to to do list", "to my to do list",
              "to check list", "to my check list")
 contact_slot <- c("contact", "text", "call", "email", "respond to", "reply to", "reach out to", "connect with", "touch base with")
-category_work <- c("work", "GSK", "g. s. k.")
+category_work <- c("work")
 
 
 ## template
@@ -76,5 +76,5 @@ utter <- c(utter_grocery,
 print(length(utter))
 
 
-write.table(x = data.frame(samples), file = "intents/AddToListIntent-utterances.txt", 
+write.table(x = data.frame(utter), file = "intents/AddToListIntent-utterances.txt", 
             col.names = FALSE, row.names = FALSE, quote = FALSE)
