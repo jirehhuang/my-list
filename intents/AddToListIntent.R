@@ -26,10 +26,10 @@ temp <- c("{add} {item}{to} from {suggested} for {purpose}{due}",
           "{add} {item}{to}{due}")
 
 
-due_slots <- c("due_date", "due_time", "due_day", "due_duration")
+due_slots <- c("due_date", "due_time", "due_day")  # TODO: due_duration; can't trigger
 
 due_options <- c(
-  sapply(c("", "due ", "by ", "at ", "in ", "within "), function(x){
+  sapply(c("", "due ", "by ", "at ", "on ", "in ", "within "), function(x){
     
     sprintf(" %s{%s}", x, due_slots)
   })
@@ -44,30 +44,30 @@ eg <- expand.grid(add = sprintf("{%s}", c("add_slot", "add_grocery_slot")),  # a
                   due = c("", due_options))
 
 utter_grocery <- unique(c(unlist(
-    sapply(seq_len(nrow(eg)), function(x){
-      
-      egx <- eg[x,,drop = FALSE]
-      
-      sapply(temp, glue::glue, 
-             .envir = as.environment(egx))
-      })
-    )))
+  sapply(seq_len(nrow(eg)), function(x){
+    
+    egx <- eg[x,,drop = FALSE]
+    
+    sapply(temp, glue::glue, 
+           .envir = as.environment(egx))
+  })
+)))
 
 
 utter_task <- c(
-  sapply(sprintf("{%s}", c("add_slot", "add_task_slot")), function(x){
-    sapply(c("", " for {category_work}"), function(y){
-      c(sprintf("%s {task_food_est}%s%s", x, due_options, y),
-        sprintf("%s {task_food_est}%s%s", x, y, due_options),
-        sprintf("%s {contact_slot} {name_slot}%s%s", x, due_options, y),
-        sprintf("%s {contact_slot} {name_slot}%s%s", x, y, due_options))
-    })
-  }),
+  unlist(sapply(sprintf("{%s}", c("add_slot", "add_task_slot")), function(x){
+    unlist(sapply(c("", " for {category_work}"), function(y){
+      unique(c(sprintf("%s {task_food_est}%s%s", x, due_options, y),
+               sprintf("%s {task_food_est}%s%s", x, y, due_options),
+               sprintf("%s {contact_slot} {name_slot}%s%s", x, due_options, y),
+               sprintf("%s {contact_slot} {name_slot}%s%s", x, y, due_options)))
+    }))
+  })),
   sprintf("%s {item_query}", c(add_slot, add_task_slot))  # can only have one slot
 )
 
 
-utter <- c(utter_grocery,
+utter <- c(utter_grocery, 
            utter_task)
 
 
