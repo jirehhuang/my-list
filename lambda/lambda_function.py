@@ -110,7 +110,7 @@ class AddToListIntentHandler(AbstractRequestHandler):
         
         ## get purpose
         purpose = ""
-        for i in ["purpose_dessert", "purpose_drink", "purpose_food", "purpose_recipe"]:
+        for i in ["purpose_dessert", "purpose_drink", "purpose_food", "purpose_recipe", "purpose_name", "purpose_church"]:
             if (slots[i].value):
                 purpose = slots[i].value
         

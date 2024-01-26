@@ -39,7 +39,8 @@ due_options <- c(
 eg <- expand.grid(add = sprintf("{%s}", c("add_slot", "add_grocery_slot")),  # add_task_slot only attached to item_query
                   item = sprintf("{%s}", c("item_dessert", "item_drink", "item_food")),  # item_food_est is very general
                   to = c("", sprintf(" {%s}", "to_slot")),
-                  purpose = sprintf("{%s}", c("purpose_dessert", "purpose_drink", "purpose_food", "purpose_recipe")),
+                  purpose = sprintf("{%s}", c("purpose_dessert", "purpose_drink", "purpose_food", 
+                                              "purpose_recipe", "purpose_name", "purpose_church")),
                   suggested = sprintf("{%s}", c("suggested_corporation", "suggested_local")),
                   due = c("", due_options))
 
