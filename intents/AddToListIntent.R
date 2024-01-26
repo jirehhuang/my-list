@@ -29,7 +29,7 @@ temp <- c("{add} {item}{to} from {suggested} for {purpose}{due}",
 due_slots <- c("due_date", "due_time", "due_day", "due_duration")
 
 due_options <- c(
-  sapply(c(""), function(x){  # , "due ", "by ", "at ", "in ", "within "
+  sapply(c("", "due ", "by ", "at ", "in ", "within "), function(x){
     
     sprintf(" %s{%s}", x, due_slots)
   })
@@ -54,14 +54,13 @@ utter_grocery <- unique(c(unlist(
     )))
 
 
-utter_contact <- sprintf("%s {contact_slot} {name_slot}", c(add_slot, add_task_slot))
-
-
 utter_task <- c(
   sapply(sprintf("{%s}", c("add_slot", "add_task_slot")), function(x){
     sapply(c("", " for {category_work}"), function(y){
       c(sprintf("%s {task_food_est}%s%s", x, due_options, y),
-        sprintf("%s {task_food_est}%s%s", x, y, due_options))
+        sprintf("%s {task_food_est}%s%s", x, y, due_options),
+        sprintf("%s {contact_slot} {name_slot}%s%s", x, due_options, y),
+        sprintf("%s {contact_slot} {name_slot}%s%s", x, y, due_options))
     })
   }),
   sprintf("%s {item_query}", c(add_slot, add_task_slot))  # can only have one slot
@@ -69,7 +68,6 @@ utter_task <- c(
 
 
 utter <- c(utter_grocery,
-           utter_contact,
            utter_task)
 
 
