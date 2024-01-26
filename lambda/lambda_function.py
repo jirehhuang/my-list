@@ -23,8 +23,9 @@ import urllib.request
 import datetime
 
 ## switch mode
-mode = "general"
+mode = ""
 # mode = "work"
+
 
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
@@ -79,46 +80,34 @@ class AddToListIntentHandler(AbstractRequestHandler):
         
         ## get item
         item = ""
-        for i in ["item_dessert", "item_drink", "item_food", "item_query"]:  # removed item_food_est
-            ## single
-            if (i in ["item_query", "item_food_est"]):
-                if (slots[i].value):
-                    item = slots[i].value
-                    category = "Task"
-            ## multiple
+        for i in ["item_query", "task_food_est", "item_dessert", "item_drink", "item_food"]:
+            ## can only take a single value
+            if (i in ["item_query"] and slots[i].value):
+                item = slots[i].value
             else:
+                ## can take multiple values
                 slotsi = ask_utils.get_simple_slot_values(ask_utils.get_slot_value_v2(handler_input, i))
                 if (len(slotsi) > 0):
                     item = ", ".join([x.value for x in slotsi])
-                    if (i in ["item_food_est"]):
-                        category = "Task"
-                    else:
-                        category = "Grocery"
         
         # contact name task
         if (slots["name_slot"].value):
             item = slots["contact_slot"].value + " " + slots["name_slot"].value
-            category = "Task"
         
         ## get purpose
         purpose = ""
-        for i in ["purpose_dessert", "purpose_drink", "purpose_food", "purpose_recipe", "purpose_slot"]:
+        for i in ["purpose_dessert", "purpose_drink", "purpose_food", "purpose_recipe"]:
             if (slots[i].value):
                 purpose = slots[i].value
-                if (i == "purpose_recipe"):
-                    category = "Grocery"
-                if (i == "purpose_slot"):
-                    category = "Task"
         
         ## get suggested
         suggested = ""
-        for i in ["suggested_corporation", "suggested_food_est", "suggested_local"]:
+        for i in ["suggested_corporation", "suggested_local"]:
             if (slots[i].value):
                 suggested = slots[i].value
-            
-        tzdelta = datetime.timedelta(-8/24)
 
         # https://stackoverflow.com/a/6558571
+        tzdelta = datetime.timedelta(-8/24)
         def next_weekday(weekday):
             d = datetime.datetime.now() + tzdelta
             weekday = weekday.lower()
@@ -157,29 +146,62 @@ class AddToListIntentHandler(AbstractRequestHandler):
                 if ("W" in due):
                     due = next_weekday("saturday") + " 11:59:59"
         
+        ## determine category
+        for i in ["add_grocery_slot", "item_dessert", "item_drink", "item_food"]:
+            if (slots[i].value or 
+                len(ask_utils.get_simple_slot_values(ask_utils.get_slot_value_v2(handler_input, i))) > 0):
+                category = "Grocery"
+                break
+        for i in ["add_task_slot", "item_query", "task_food_est", "contact_slot"]:
+            if (slots[i].value or 
+                len(ask_utils.get_simple_slot_values(ask_utils.get_slot_value_v2(handler_input, i))) > 0):
+                category = "Task"
+                break
+        for i in ["category_work"]:
+            if (slots[i].value or 
+                len(ask_utils.get_simple_slot_values(ask_utils.get_slot_value_v2(handler_input, i))) > 0):
+                category = "Work"
+                break
+        
+        # check inputs
         if (len(item) > 0):
-            speak_output = "Added '" + item + "' to list"
-            # item = item.capitalize()
-            category = category.capitalize()
-            purpose = purpose.capitalize()
-            suggested = suggested.capitalize()
+            speak_output = "Added '" + item + "'"
+            def capitalize(x):
+                if (len(x) > 0):
+                    x = x[:1].upper() + x[1:]
+                return x
+            item = capitalize(item)
+            category = capitalize(category)
+            purpose = purpose.title()
+            suggested = capitalize(suggested)
             if (suggested == "H mart" or suggested == "Hmart"):
                 suggested = "H Mart"
             if (suggested == "99 ranch" or suggested == "Ranch 99"):
                 suggested = "99 Ranch"
             if (suggested == "Costco business center" or suggested == "Costco business"):
                 suggested = "Costco Business"
+                
+            ## replace space with %20
             item = re.sub(" ", "%20", item)
             category = re.sub(" ", "%20", category)
             purpose = re.sub(" ", "%20", purpose)
             suggested = re.sub(" ", "%20", suggested)
             due = re.sub(" ", "%20", due)
+            
+            ## initialize author
+            author = "Alexa%20via%20AddToListIntent"
+            
+            ## call webhook and return
             if (mode == "work"):
-                webhook = ("https://script.google.com/macros/s/AKfycbx9yHcP-bv2m8Czo7ah6GspkodwnsOk-uj1cg6snw4yXyKxCd-CZADw3XEHt8kOmKRnOA/exec?fn=add_item&item=" + 
-                            item + "&purpose=Work&category=Task&suggested=&due=" + due + "&author=Alexa%20via%20AddToListIntent%20Work")
+                category = "Work"
+                purpose = ""
+                author = author + "%20Work"
+                speak_output = speak_output + " to work list"
             else:
-                webhook = ("https://script.google.com/macros/s/AKfycbx9yHcP-bv2m8Czo7ah6GspkodwnsOk-uj1cg6snw4yXyKxCd-CZADw3XEHt8kOmKRnOA/exec?fn=add_item&item=" + 
-                            item + "&category=" + category + "&purpose=" + purpose + "&suggested=" + suggested + "&due=" + due + "&author=Alexa%20via%20AddToListIntent")
+                speak_output = speak_output + " to list"
+                
+            webhook = ("https://script.google.com/macros/s/AKfycbx9yHcP-bv2m8Czo7ah6GspkodwnsOk-uj1cg6snw4yXyKxCd-CZADw3XEHt8kOmKRnOA/exec?fn=add_item&item=" + 
+                        item + "&category=" + category + "&purpose=" + purpose + "&suggested=" + suggested + "&due=" + due + "&author=" + author)
             contents = urllib.request.urlopen(webhook).read()
         else:
             speak_output = "No item was provided"
