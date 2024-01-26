@@ -22,9 +22,13 @@ import re
 import urllib.request
 import datetime
 
-## switch mode
+## globals
 mode = ""
 # mode = "work"
+if (mode == "work"):
+    required_user_id = "amzn1.ask.account.AMAWCFJKYRPNZNAR7GKWSUR6HCSQTXVEW2AGGTL5VTQTKAWVKIW35326DOEK4OLPTBCIT2VU6BCAHDK3JKEATAYARHJUKVNL55MJRDKHNR2NOJTC53R2UK4LXJ4WRNGG7EG6B5ON5B35QL27IW3GIZ7724HDMNH2K3VLVWF73IG5MN274DWWOBPHQIRW4L54YWYHGVZDI2B2DD3NEAHAJYOKSGTSXNURCWG3YNKY4IDQ"
+else:
+    required_user_id = "amzn1.ask.account.AMAQHAVMJSFT4QRGIGTI2BEVDF2J6AHO73JCLYUJK33JUQLGRBHZXXY3VPLJ2LIRGNOSVQE66KT74EC7CP5754545BJQOAPFG2SW3JSUS6NIWRJBZYEUHYB56WWKX6UFPGCFOXZ7ZBGCSKIG4P7IQNEPE6AGKDJZLRQ2CAMK5PRT65ODDQIYZ6LGYNCC7ZCRSE56AKFYG4W5GHBDKDSOU2S6UV5J2CGYWPWQFX5HQGOA"
 
 
 class LaunchRequestHandler(AbstractRequestHandler):
@@ -74,6 +78,16 @@ class AddToListIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         slots = handler_input.request_envelope.request.intent.slots
+        
+        ## check user
+        user_id = ask_utils.request_util.get_user_id(handler_input)
+        if (user_id not in ["", required_user_id]):
+            return (
+                handler_input.response_builder
+                    # .speak("Invalid user")
+                    .speak("Invalid user: " + user_id)
+                    .response
+            )
         
         ## initialize category: default blank
         category = ""
